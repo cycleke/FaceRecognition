@@ -15,15 +15,18 @@
 
 #include <QAction>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QStatusBar>
 
 #include "mainwindow.h"
+#include "ui_aboutFaceRecognition.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
 
   ui->setupUi(this);
+  this->setWindowTitle(tr("Face Recognition"));
 
   // Add MenuBar Action
   connect(ui->actionPreferencs, &QAction::triggered, this,
@@ -46,9 +49,19 @@ MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::openPreferences() {}
 
-void MainWindow::openAboutFaceRecognition() {}
+void MainWindow::openAboutFaceRecognition() {
+  QDialog *dialog = new QDialog(this);
+  Ui::AboutFaceRecognition *ui = new Ui::AboutFaceRecognition;
 
-void MainWindow::openAboutQt() {}
+  ui->setupUi(dialog);
+  dialog->setWindowTitle(tr("About Face Recognition"));
+  dialog->exec();
+
+  delete ui;
+  delete dialog;
+}
+
+void MainWindow::openAboutQt() { QMessageBox::aboutQt(this); }
 
 void MainWindow::on_pushButton_OpenCamera_clicked() {
   ui->pushButton_OpenCamera->setDisabled(true);

@@ -11,6 +11,6 @@ The gui is based on Qt5.
 - [ ] Make GUI.
   - [x] Main Window
   - [ ] Settings
-  - [ ] About
+  - [x] About
 - [ ] Add and delete faces.
 - [ ] Import and export data.
