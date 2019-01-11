@@ -7,6 +7,18 @@ The Face Recognition with OpenCV and Qt
 This program is used to recognise faces with opencv.
 The gui is based on Qt5.
 
+## Requirements
+Qt5, OpenCV4
+
+## Build Steps
+``` shell
+git clone https://github.com/cycleke/FaceRecognition
+cd FaceRecognition
+qmake -project QT+=widgets
+qmake
+make
+```
+
 ## TODOs
 - [ ] Make GUI.
   - [x] Main Window
