@@ -1,10 +1,10 @@
+#include <iostream>
 #include <QApplication>
 
-#include "core/core.cpp"
 #include "gui/mainwindow.cpp"
 
-int main(int argc, char *argv[]) {
-  QApplication main_app(argc, argv);
+int main(int argc, char *args[]) {
+  QApplication main_app(argc, args);
 
   MainWindow main_win;
   main_win.show();

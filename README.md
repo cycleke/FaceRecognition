@@ -14,8 +14,7 @@ Qt5, OpenCV4
 ``` shell
 git clone https://github.com/cycleke/FaceRecognition
 cd FaceRecognition
-qmake -project QT+=widgets
-qmake
+cmake
 make
 ```
 

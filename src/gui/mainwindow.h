@@ -1,12 +1,16 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+//
+// Created by cycleke on 19-3-5.
+//
+
+#ifndef FACERECOGNITION_MAINWINDOW_H
+#define FACERECOGNITION_MAINWINDOW_H
 
 #include <QMainWindow>
 
 #include "ui_mainwindow.h"
 
 class MainWindow : public QMainWindow {
-  Q_OBJECT
+Q_OBJECT
 public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
@@ -29,4 +33,5 @@ private slots:
   void on_pushButton_DeleteFaces_clicked();
 };
 
-#endif // MAINWINDOW_H
+#endif //FACERECOGNITION_MAINWINDOW_H
+
