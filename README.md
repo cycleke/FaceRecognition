@@ -14,14 +14,15 @@ Qt5, OpenCV4
 ``` shell
 git clone https://github.com/cycleke/FaceRecognition
 cd FaceRecognition
-cmake
+cmake .
 make
 ```
 
 ## TODOs
-- [ ] Make GUI.
-  - [x] Main Window
+- [ ] Make GUI
+  - [ ] Main Window
   - [ ] Settings
-  - [x] About
-- [ ] Add and delete faces.
-- [ ] Import and export data.
+  - [ ] About
+- [ ] Add and delete faces
+  - [ ] Detect faces
+- [ ] Import and export data

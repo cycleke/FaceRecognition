@@ -60,3 +60,5 @@ build/
 cmake_install.cmake
 compile_commands.json
 cmake-build-debug/
+/.clang-format
+imgs

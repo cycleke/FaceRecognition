@@ -4,6 +4,10 @@ project(FaceRecognition
 
 set(APP_NAME "FaceRecognition")
 
+if (WIN32)
+    add_definitions(-DWIM32)
+endif ()
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -11,6 +15,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_FLAGS "-O2")
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
@@ -25,7 +30,8 @@ include_directories(
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./build)
 
-add_executable(${APP_NAME} src/main.cpp src/gui/mainwindow.h)
+aux_source_directory(./src src)
+add_executable(${APP_NAME} ${src})
 
 target_link_libraries(${APP_NAME}
         Qt5::Core
