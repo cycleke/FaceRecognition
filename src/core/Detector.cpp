@@ -2,7 +2,7 @@
 // Created by cycleke on 19-3-5.
 //
 
-#include "Detecter.h"
+#include "Detector.h"
 
 #include <cstdio>
 #include <opencv2/objdetect.hpp>
@@ -33,7 +33,7 @@
 using namespace std;
 using namespace cv;
 
-int Detecter::createDirectory(const string &directory_path) {
+int Detector::createDirectory(const string &directory_path) {
   int dir_path_length = static_cast<int>(directory_path.length());
   if (dir_path_length > MAX_PATH_LEN) {
     cerr << "Directory name is too long" << endl;
@@ -53,7 +53,7 @@ int Detecter::createDirectory(const string &directory_path) {
   }
   return 0;
 }
-void Detecter::getFacesFromCamera(const string &name) {
+void Detector::getFacesFromCamera(const string &name) {
   /*
    * Get IMG_NUMBER photos of someone and save them.
    *
@@ -124,6 +124,6 @@ void Detecter::getFacesFromCamera(const string &name) {
   capture.release();
   destroyAllWindows();
 }
-Detecter::~Detecter() = default;
-Detecter::Detecter(const string &data_path, const string &cascade_path)
+Detector::~Detector() = default;
+Detector::Detector(const string &data_path, const string &cascade_path)
     : data_path(data_path), cascade_path(cascade_path) {}

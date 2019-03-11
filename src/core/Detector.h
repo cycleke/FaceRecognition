@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-class Detecter {
+class Detector {
 private:
   std::string data_path;
   std::string cascade_path;
@@ -23,11 +23,11 @@ private:
   int createDirectory(const std::string &directory_path);
 
 public:
-  explicit Detecter(
+  explicit Detector(
       const std::string &data_path = "imgs/",
       const std::string &cascade_path =
           "static/haarcascades/haarcascade_frontalface_default.xml");
-  ~Detecter();
+  ~Detector();
   void getFacesFromCamera(const std::string &name);
 };
 

@@ -1,7 +1,7 @@
 #include <iostream>
 
 //#include "gui/mainwindow.cpp"
-#include "src/core/Detecter.cpp"
+#include "src/core/Detector.cpp"
 
 int main(int argc, char *args[]) {
   // Disable Qt Code
@@ -13,7 +13,7 @@ int main(int argc, char *args[]) {
 
   return main_app.exec();
    */
-  Detecter recognizer;
+  Detector recognizer;
 
   return 0;
 }
