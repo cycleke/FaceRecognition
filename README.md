@@ -18,11 +18,13 @@ cmake .
 make
 ```
 
+Note: Some of the files are tracked with lfs due to their size, please clone with lfs.
+
 ## TODOs
 - [ ] Make GUI
   - [ ] Main Window
   - [ ] Settings
   - [ ] About
 - [ ] Add and delete faces
-  - [ ] Detect faces
+  - [x] Detect faces
 - [ ] Import and export data

@@ -28,7 +28,7 @@ public:
       const std::string &cascade_path =
           "static/haarcascades/haarcascade_frontalface_default.xml");
   ~Detector();
-  void getFacesFromCamera(const std::string &name);
+  void saveFacesFromCamera(const std::string &name);
 };
 
 #endif // FACERECOGNITION_RECOGNIZER_H

@@ -10,7 +10,8 @@
 
 #define MAX_PATH_LEN 256
 #define IMG_SIZE 128
-#define IMG_NUMBER 20
+#define IMG_NUMBER 10
+#define DATA_FORMAT ".jpeg"
 
 #ifdef WIN32
 #include <direct.h>
@@ -53,7 +54,7 @@ int Detector::createDirectory(const string &directory_path) {
   }
   return 0;
 }
-void Detector::getFacesFromCamera(const string &name) {
+void Detector::saveFacesFromCamera(const string &name) {
   /*
    * Get IMG_NUMBER photos of someone and save them.
    *
@@ -93,6 +94,7 @@ void Detector::getFacesFromCamera(const string &name) {
 
     int max_size = 0;
     Mat face_img;
+    Mat display_frame = frame.clone();
     for (const Rect &face : faces) {
       int x = face.x;
       int y = face.y;
@@ -103,20 +105,22 @@ void Detector::getFacesFromCamera(const string &name) {
         face_img = frame(Range(y, y + h - 1), Range(x, x + w - 1));
         resize(face_img, face_img, Size(IMG_SIZE, IMG_SIZE));
         face_img = face_img * real_u(random_engine) +
-            Mat::ones(IMG_SIZE, IMG_SIZE, face_img.type());
+            int_u(random_engine) *
+                Mat::ones(IMG_SIZE, IMG_SIZE, face_img.type());
       }
-      rectangle(frame, Point(x, y), Point(x + w - 1, y + h - 1),
+      rectangle(display_frame, Point(x, y), Point(x + w - 1, y + h - 1),
                 Scalar(128, 23, 7), 2);
-      putText(frame, "", Point(x, y - 20), FONT_HERSHEY_SIMPLEX, 0.8,
+      putText(display_frame, "", Point(x, y - 20), FONT_HERSHEY_SIMPLEX, 0.8,
               Scalar(255, 255, 255), 2);
     }
 
     if (max_size > 0) {
-      printf("It's processing %d image.\n", ++count);
-      imwrite(data_path + to_string(count) + ".jpg", face_img);
+      printf("It's processing %d image.\n", count);
+      imwrite(data_path + to_string(count) + DATA_FORMAT, face_img);
+      count++;
     }
 
-    imshow("Adding Face", frame);
+    imshow("Adding Face", display_frame);
     char c = (char) waitKey(1);
     if (c == 27 || c == 'q' || c == 'Q')
       break;

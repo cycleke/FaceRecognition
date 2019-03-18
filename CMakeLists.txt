@@ -30,8 +30,7 @@ include_directories(
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./build)
 
-aux_source_directory(./src src)
-add_executable(${APP_NAME} ${src})
+add_executable(${APP_NAME} src/main.cpp src/core/FMTCNN.h src/core/Detector.h)
 
 target_link_libraries(${APP_NAME}
         Qt5::Core
