@@ -27,4 +27,5 @@ Note: Some of the files are tracked with lfs due to their size, please clone wit
   - [ ] About
 - [ ] Add and delete faces
   - [x] Detect faces
+  - [x] Recognise different faces
 - [ ] Import and export data
