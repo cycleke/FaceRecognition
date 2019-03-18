@@ -41,7 +41,7 @@ int main(int argc, char *args[]) {
     FMTCNN cnn;
 
     puts("Start loading.");
-    cnn.loadFacesAndNames();
+    loadFacesAndNames(cnn.face_names, "imgs/");
     puts("Finished loading.");
 
     cnn.recogniseWithCamera();

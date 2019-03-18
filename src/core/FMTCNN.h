@@ -20,7 +20,7 @@
 #define IMG_NORMAL_WIDTH 96
 #define IMG_NUMBER 10
 #define DATA_FORMAT ".jpeg"
-#define SIMILARITY_BOUND 0.988
+#define SIMILARITY_BOUND 0.3
 /*
 #define IMG_SIZE 128
 #define MAX_PATH_LEN 256
@@ -92,10 +92,8 @@ public:
   void rotateFace(Mat img, FaceInfo face_info, Mat &dst_img);
   void normalizeFace(Mat dst_img, Mat &normalize_img);
 
-  void loadFacesAndNames();
   string recogniseFace(Mat img);
   void recogniseWithCamera();
-  double CosineSimilarity(const Mat &a, const Mat &b);
   // int createDirectory(const string &directory_path);
   // void saveFacesFromCamera(const std::string &name);
 
@@ -113,7 +111,9 @@ private:
   const float std_val = 0.0078125f;
 
   const string proto_model_dir = "static/model";
-  const string data_path = "imgs/";
 };
+
+void loadFacesAndNames(vector<FaceFeature> &face_names, const string &data_path);
+double CosineSimilarity(const Mat &a, const Mat &b);
 
 #endif // FACERECOGNITION_FMTCNN_H

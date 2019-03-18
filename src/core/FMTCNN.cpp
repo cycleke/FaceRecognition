@@ -532,12 +532,14 @@ void FMTCNN::normalizeFace(Mat dst_img, Mat &normalize_img) {
   normalize_img /= 128;
 }
 
-void FMTCNN::loadFacesAndNames() {
+void loadFacesAndNames(vector<FaceFeature> &face_names, const string &data_path) {
   face_names.clear();
   DIR *dir_p = opendir(data_path.c_str());
   if (dir_p == nullptr) {
     return;
   }
+
+  FMTCNN cnn;
   struct dirent *dir_iter;
   for (dir_iter = readdir(dir_p); dir_iter != nullptr;
        dir_iter = readdir(dir_p)) {
@@ -547,14 +549,14 @@ void FMTCNN::loadFacesAndNames() {
     }
     FaceFeature feature;
     feature.name = name;
-    const string path = this->data_path + name + string({FILE_SPLIT});
+    const string path = data_path + name + string({FILE_SPLIT});
     for (int i = 0; i < IMG_NUMBER; i++) {
       String file_path = path + to_string(i) + DATA_FORMAT;
       // file_path = "imgs/cycleke/1.jpeg";
       cout << "Loading " << file_path << endl;
       Mat img = imread(file_path, 1);
       vector<FaceInfo> face_infos;
-      Detect(img, face_infos);
+      cnn.Detect(img, face_infos);
 
       Mat face_img;
       FaceInfo face_info{};
@@ -575,21 +577,21 @@ void FMTCNN::loadFacesAndNames() {
         continue;
       }
       Mat dst_img(IMG_NORMAL_HEIGHT, IMG_NORMAL_WIDTH, CV_8UC3);
-      rotateFace(face_img, face_info, dst_img);
+      cnn.rotateFace(face_img, face_info, dst_img);
 
       Mat normalize_img;
       normalize_img.create(dst_img.size(), CV_32FC3);
-      normalizeFace(dst_img, normalize_img);
+      cnn.normalizeFace(dst_img, normalize_img);
 
       Mat input_blob = blobFromImage(normalize_img);
-      net.setInput(input_blob, "data");
-      feature.feature[i] = net.forward("fc5");
+      cnn.net.setInput(input_blob, "data");
+      feature.feature[i] = cnn.net.forward("fc5");
     }
     face_names.push_back(feature);
   }
 }
 
-double FMTCNN::CosineSimilarity(const Mat &a, const Mat &b) {
+double CosineSimilarity(const Mat &a, const Mat &b) {
   if (a.empty() || b.empty()) {
     return -1.0;
   }
@@ -622,6 +624,7 @@ string FMTCNN::recogniseFace(Mat feature) {
     }
   }
   if (max_similarity > SIMILARITY_BOUND) {
+    printf("%lf\n", max_similarity);
     return res;
   } else {
     return "unknown";
