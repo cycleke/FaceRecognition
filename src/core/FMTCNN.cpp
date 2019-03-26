@@ -643,97 +643,41 @@ void FMTCNN::recogniseWithCamera() {
     Mat frame;
     capture >> frame;
 
-    vector<FaceInfo> face_infos;
-    Detect(frame, face_infos);
+    Mat image = recogniseFrame(frame);
 
-    for (auto &info : face_infos) {
-      Mat dst_img(IMG_NORMAL_HEIGHT, IMG_NORMAL_WIDTH, CV_8UC3);
-      rotateFace(frame, info, dst_img);
-
-      Mat normalize_img;
-      normalize_img.create(dst_img.size(), CV_32FC3);
-      normalizeFace(dst_img, normalize_img);
-
-      Mat input_blob = blobFromImage(normalize_img);
-      Mat feature_output;
-      net.setInput(input_blob, "data");
-      feature_output = net.forward("fc5");
-
-      string name = recogniseFace(feature_output);
-      int x = (int) info.box.x_min;
-      int y = (int) info.box.y_min;
-      int w = (int) (info.box.x_max - info.box.x_min + 1);
-      int h = (int) (info.box.y_max - info.box.y_min + 1);
-      rectangle(frame, Rect(x, y, w, h), Scalar(0, 0, 255), 2);
-      putText(frame, name, Point(x, y - 20), FONT_HERSHEY_SIMPLEX, 0.8,
-              Scalar(255, 255, 255), 2);
-    }
-
-    imshow("Recognising Face", frame);
+    imshow("Recognising Face", image);
     char c = (char) waitKey(1);
     if (c == 27 || c == 'q' || c == 'Q')
       break;
   }
 }
 
-
-
-/*
-int FMTCNN::createDirectory(const string &directory_path) {
-  int dir_path_length = static_cast<int>(directory_path.length());
-  if (dir_path_length > MAX_PATH_LEN) {
-    cerr << "Directory name is too long" << endl;
-    return -1;
-  }
-  char temp_dir_path[MAX_PATH_LEN] = {0};
-  for (int i = 0; i < dir_path_length; i++) {
-    temp_dir_path[i] = directory_path[i];
-    if (temp_dir_path[i] == FILE_SPLIT) {
-      if (ACCESS(temp_dir_path, 0) != 0) {
-        int ret = MKDIR(temp_dir_path);
-        if (ret != 0) {
-          return ret;
-        }
-      }
-    }
-  }
-  return 0;
-}
-
-void FMTCNN::saveFacesFromCamera(const std::string &name) {
-  VideoCapture capture;
+Mat FMTCNN::recogniseFrame(const Mat &frame) {
+  Mat image = frame.clone();
   vector<FaceInfo> face_infos;
-  Mat frame;
-  const string path = this->data_path + name + string({FILE_SPLIT});
+  Detect(image, face_infos);
 
-  createDirectory(path);
-  capture.open(0);
-  if (!capture.isOpened()) {
-    puts("The camera is not open!!!");
-    return;
+  for (auto &info : face_infos) {
+    Mat dst_img(IMG_NORMAL_HEIGHT, IMG_NORMAL_WIDTH, CV_8UC3);
+    rotateFace(image, info, dst_img);
+
+    Mat normalize_img;
+    normalize_img.create(dst_img.size(), CV_32FC3);
+    normalizeFace(dst_img, normalize_img);
+
+    Mat input_blob = blobFromImage(normalize_img);
+    Mat feature_output;
+    net.setInput(input_blob, "data");
+    feature_output = net.forward("fc5");
+
+    string name = recogniseFace(feature_output);
+    int x = (int) info.box.x_min;
+    int y = (int) info.box.y_min;
+    int w = (int) (info.box.x_max - info.box.x_min + 1);
+    int h = (int) (info.box.y_max - info.box.y_min + 1);
+    rectangle(image, Rect(x, y, w, h), Scalar(0, 0, 255), 2);
+    putText(image, name, Point(x, y - 20), FONT_HERSHEY_SIMPLEX, 0.8,
+            Scalar(255, 255, 255), 2);
   }
-
-  int count = 0;
- while (count < IMG_NUMBER) {
-
-    capture >> frame;
-    Detect(frame, face_infos);
-
-    for (auto &info : face_infos) {
-      int x = (int) info.box.x_min;
-      int y = (int) info.box.y_min;
-      int w = (int) (info.box.x_max - info.box.x_min + 1);
-      int h = (int) (info.box.y_max - info.box.y_min + 1);
-      imwrite(path + to_string(count) + DATA_FORMAT, frame(Range(y, y + h - 1),
-Range(x, x + w - 1)).clone()); count++; break;
-    }
-
-    imshow("Adding Face", frame);
-    char c = (char) waitKey(1);
-    if (c == 27 || c == 'q' || c == 'Q')
-      break;
-  }
-  capture.release();
-  destroyAllWindows();
+  return image;
 }
-*/

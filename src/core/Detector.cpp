@@ -4,8 +4,6 @@
 
 #include "Detector.h"
 
-#include <cstdio>
-#include <opencv2/objdetect.hpp>
 #include <random>
 
 #define MAX_PATH_LEN 256
@@ -66,11 +64,9 @@ void Detector::saveFacesFromCamera(const string &name) {
   VideoCapture capture;
   CascadeClassifier classifier = CascadeClassifier(this->cascade_path);
 
-  default_random_engine random_engine(
-      static_cast<unsigned long>(time(nullptr)));
-  uniform_real_distribution<double> real_u(0.5, 1.5);
-  uniform_int_distribution<int> int_u(-50, 50);
-
+  if (capture.isOpened()) {
+    capture.release();
+  }
   capture.open(0);
   if (!capture.isOpened()) {
     puts("The camera is not open!!!");
@@ -104,9 +100,6 @@ void Detector::saveFacesFromCamera(const string &name) {
         max_size = h * w;
         face_img = frame(Range(y, y + h - 1), Range(x, x + w - 1));
         resize(face_img, face_img, Size(IMG_SIZE, IMG_SIZE));
-        face_img = face_img * real_u(random_engine) +
-            int_u(random_engine) *
-                Mat::ones(IMG_SIZE, IMG_SIZE, face_img.type());
       }
       rectangle(display_frame, Point(x, y), Point(x + w - 1, y + h - 1),
                 Scalar(128, 23, 7), 2);
@@ -126,7 +119,7 @@ void Detector::saveFacesFromCamera(const string &name) {
       break;
   }
   capture.release();
-  destroyAllWindows();
+  destroyWindow("Adding Face");
 }
 Detector::~Detector() = default;
 Detector::Detector(const string &data_path, const string &cascade_path)

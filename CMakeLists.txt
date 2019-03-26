@@ -29,9 +29,17 @@ include_directories(
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./build)
-
-add_executable(${APP_NAME} src/main.cpp src/core/FMTCNN.h src/core/Detector.h)
-
+set(SOURCE_FILES
+        src/main.cpp
+        src/ui/mainwindow.h
+        src/ui/mainwindow.cpp
+        src/ui/ui_aboutFaceRecognition.h
+        src/ui/ui_mainwindow.h
+        src/core/Detector.h
+        src/core/Detector.cpp
+        src/core/FMTCNN.h
+        src/core/FMTCNN.cpp)
+add_executable(${APP_NAME} ${SOURCE_FILES})
 target_link_libraries(${APP_NAME}
         Qt5::Core
         Qt5::Gui

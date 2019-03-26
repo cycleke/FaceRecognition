@@ -94,6 +94,7 @@ public:
 
   string recogniseFace(Mat img);
   void recogniseWithCamera();
+  Mat recogniseFrame(const Mat &frame);
   // int createDirectory(const string &directory_path);
   // void saveFacesFromCamera(const std::string &name);
 

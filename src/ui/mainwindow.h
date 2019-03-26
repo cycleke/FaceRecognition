@@ -5,9 +5,11 @@
 #ifndef FACERECOGNITION_MAINWINDOW_H
 #define FACERECOGNITION_MAINWINDOW_H
 
-#include <QMainWindow>
-
 #include "ui_mainwindow.h"
+#include <QMainWindow>
+#include <QTimer>
+#include "src/core/Detector.h"
+#include "src/core/FMTCNN.h"
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -17,11 +19,10 @@ public:
 
 private:
   Ui::MainWindow *ui;
+  FMTCNN cnn;
+  VideoCapture capture;
+  QTimer *timer;
 
-  void openCamera();
-  void closeCamera();
-  void addNewFace();
-  void deleteFaces();
   void openPreferences();
   void openAboutFaceRecognition();
   void openAboutQt();
@@ -31,7 +32,8 @@ private slots:
   void on_pushButton_CloseCamera_clicked();
   void on_pushButton_AddNewFaces_clicked();
   void on_pushButton_DeleteFaces_clicked();
+
+  void recogniseFace();
 };
 
-#endif //FACERECOGNITION_MAINWINDOW_H
-
+#endif // FACERECOGNITION_MAINWINDOW_H

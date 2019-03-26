@@ -26,7 +26,7 @@ public:
   explicit Detector(
       const std::string &data_path = "imgs/",
       const std::string &cascade_path =
-          "static/haarcascades/haarcascade_frontalface_default.xml");
+      "static/haarcascades/haarcascade_frontalface_default.xml");
   ~Detector();
   void saveFacesFromCamera(const std::string &name);
 };
