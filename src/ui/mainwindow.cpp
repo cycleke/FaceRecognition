@@ -119,6 +119,8 @@ void MainWindow::on_pushButton_CloseCamera_clicked() {
   ui->pushButton_CloseCamera->setDisabled(true);
   ui->pushButton_AddNewFaces->setDisabled(true);
   ui->pushButton_DeleteFaces->setDisabled(true);
+
+  capture.release();
 }
 
 void MainWindow::on_pushButton_AddNewFaces_clicked() {
