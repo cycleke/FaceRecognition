@@ -46,4 +46,6 @@ target_link_libraries(${APP_NAME}
         Qt5::Gui
         Qt5::Widgets
         Qt5::UiTools
-        ${OpenCV_LIBS})
+        ${OpenCV_LIBS}
+        stdc++fs)
+

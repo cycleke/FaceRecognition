@@ -6,77 +6,12 @@
 
 #include <random>
 
-#define MAX_PATH_LEN 256
 #define IMG_SIZE 128
-#define IMG_NUMBER 10
-#define DATA_FORMAT ".jpeg"
-
-#ifdef WIN32
-#include <direct.h>
-#include <io.h>
-#else
-#include <sys/stat.h>
-#include <unistd.h>
-#endif
-
-#ifdef WIN32
-#define ACCESS(fileName, accessMode) _access(fileName, accessMode)
-#define MKDIR(path) _mkdir(path)
-#define FILE_SPLIT '\\'
-#else
-#define ACCESS(fileName, accessMode) access(fileName, accessMode)
-#define MKDIR(path) mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
-#define FILE_SPLIT '/'
-#endif
+#define IMG_NUMBER 20
+#define DATA_FORMAT ".jpg"
 
 using namespace std;
 using namespace cv;
-
-int Detector::createDirectory(const string &directory_path) {
-  int dir_path_length = static_cast<int>(directory_path.length());
-  if (dir_path_length > MAX_PATH_LEN) {
-    cerr << "Directory name is too long" << endl;
-    return -1;
-  }
-  char temp_dir_path[MAX_PATH_LEN] = {0};
-  for (int i = 0; i < dir_path_length; i++) {
-    temp_dir_path[i] = directory_path[i];
-    if (temp_dir_path[i] == FILE_SPLIT) {
-      if (ACCESS(temp_dir_path, 0) != 0) {
-        int ret = MKDIR(temp_dir_path);
-        if (ret != 0) {
-          return ret;
-        }
-      }
-    }
-  }
-  return 0;
-}
-
-void relight(Mat &img) {
-  /*
-   * Relight the frane to make data more random
-   * Param
-   *   img: the img to relight
-   */
-  static mt19937 rdm(chrono::steady_clock::now().time_since_epoch().count());
-  static uniform_int_distribution<int> u_int(-50, 50);
-  static uniform_real_distribution<float> u_real(0.5, 1.5);
-
-  int bias = u_int(rdm);
-  float light = u_real(rdm);
-
-  int n = img.rows;
-  int m = img.cols * img.channels();
-
-  for (int i = 0; i < n; ++i) {
-    auto iter = img.ptr<uchar>(i);
-    for (int j = 0; j < m; ++j) {
-      *iter = *iter * light + bias;
-      ++iter;
-    }
-  }
-}
 
 void Detector::saveFacesFromCamera(const string &name) {
   /*
@@ -85,8 +20,9 @@ void Detector::saveFacesFromCamera(const string &name) {
    * Param
    *   name: the name of someone
    */
-  string data_path = this->data_path + name + string({FILE_SPLIT});
-  createDirectory(data_path);
+  string data_path = this->data_path + name + "/";
+  filesystem::create_directories(data_path);
+
   VideoCapture capture;
   CascadeClassifier classifier = CascadeClassifier(this->cascade_path);
 
@@ -135,13 +71,12 @@ void Detector::saveFacesFromCamera(const string &name) {
 
     if (max_size > 0) {
       printf("It's processing %d image.\n", count);
-      relight(face_img);
       imwrite(data_path + to_string(count) + DATA_FORMAT, face_img);
       count++;
     }
 
     imshow("Adding Face", display_frame);
-    char c = (char)waitKey(1);
+    char c = (char)waitKey(30);
     if (c == 27 || c == 'q' || c == 'Q')
       break;
   }

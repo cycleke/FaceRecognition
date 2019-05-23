@@ -10,9 +10,9 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/opencv.hpp>
 
-#include <dirent.h>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 class Detector {
 private:
@@ -20,7 +20,6 @@ private:
   std::string cascade_path;
   std::string model_txt;
   std::string model_bin;
-  int createDirectory(const std::string &directory_path);
 
 public:
   explicit Detector(

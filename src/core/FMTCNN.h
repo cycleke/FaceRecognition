@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <dirent.h>
 #include <iostream>
 #include <memory>
 #include <opencv2/objdetect.hpp>
@@ -15,34 +14,13 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 #define IMG_NORMAL_HEIGHT 112
 #define IMG_NORMAL_WIDTH 96
-#define IMG_NUMBER 10
-#define DATA_FORMAT ".jpeg"
+#define IMG_NUMBER 20
+#define DATA_FORMAT ".jpg"
 #define SIMILARITY_BOUND 0.3
-/*
-#define IMG_SIZE 128
-#define MAX_PATH_LEN 256
- */
-
-#ifdef WIN32
-#include <direct.h>
-#include <io.h>
-#else
-#include <sys/stat.h>
-#include <unistd.h>
-#endif
-
-#ifdef WIN32
-#define ACCESS(fileName, accessMode) _access(fileName, accessMode)
-#define MKDIR(path) _mkdir(path)
-#define FILE_SPLIT '\\'
-#else
-#define ACCESS(fileName, accessMode) access(fileName, accessMode)
-#define MKDIR(path) mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
-#define FILE_SPLIT '/'
-#endif
 
 using namespace std;
 using namespace cv;

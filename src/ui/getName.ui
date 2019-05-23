@@ -15,11 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QPlainTextEdit" name="plainTextEdit">
-     <property name="plainText">
-      <string>Please write down your name.</string>
-     </property>
-    </widget>
+    <widget class="QLineEdit" name="lineEdit"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

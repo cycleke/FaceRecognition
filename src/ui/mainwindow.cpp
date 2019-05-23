@@ -22,9 +22,8 @@
 #include <QStatusBar>
 #include <filesystem>
 
-
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), capture() , detector(){
+    : QMainWindow(parent), ui(new Ui::MainWindow), capture(), detector() {
 
   ui->setupUi(this);
   ui->label_CameraShow->setScaledContents(true);
@@ -32,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent)
 
   timer = new QTimer(this);
   connect(timer, &QTimer::timeout, this, &MainWindow::recogniseFace);
-
 
   loadFacesAndNames(cnn.face_names, "imgs/");
 
@@ -47,8 +45,8 @@ MainWindow::MainWindow(QWidget *parent)
   // Init
   ui->pushButton_OpenCamera->setDisabled(false);
   ui->pushButton_CloseCamera->setDisabled(true);
-  ui->pushButton_AddNewFaces->setDisabled(true);
-  ui->pushButton_DeleteFaces->setDisabled(true);
+  ui->pushButton_AddNewFaces->setDisabled(false);
+  ui->pushButton_DeleteFaces->setDisabled(false);
 }
 
 MainWindow::~MainWindow() {
@@ -125,30 +123,49 @@ void MainWindow::recogniseFace() {
 void MainWindow::on_pushButton_CloseCamera_clicked() {
   ui->pushButton_OpenCamera->setDisabled(false);
   ui->pushButton_CloseCamera->setDisabled(true);
-  ui->pushButton_AddNewFaces->setDisabled(true);
-  ui->pushButton_DeleteFaces->setDisabled(true);
+  ui->pushButton_AddNewFaces->setDisabled(false);
+  ui->pushButton_DeleteFaces->setDisabled(false);
   timer->stop();
   capture.release();
   ui->label_CameraShow->setPixmap(QPixmap());
 }
 
 void MainWindow::on_pushButton_AddNewFaces_clicked() {
-  this->on_pushButton_CloseCamera_clicked();
 
   QDialog *dialog = new QDialog(this);
   auto *ui = new Ui::getName;
 
   ui->setupUi(dialog);
-  dialog->setWindowTitle(tr("Add New Fases"));
-  dialog->exec();
-
-  QString name = ui->plainTextEdit->toPlainText();
-  detector.saveFacesFromCamera(name.toStdString());
-
+  dialog->setWindowTitle(tr("Add New Faces"));
+  if (dialog->exec()) {
+    QString name = ui->lineEdit->text();
+    if (!name.isEmpty()) {
+      detector.saveFacesFromCamera(name.toStdString());
+      loadFacesAndNames(cnn.face_names, "imgs/");
+    }
+  }
   delete ui;
   delete dialog;
 }
 
 void MainWindow::on_pushButton_DeleteFaces_clicked() {
-  // todo
+  QDialog *dialog = new QDialog(this);
+  auto *ui = new Ui::getName;
+
+  ui->setupUi(dialog);
+  dialog->setWindowTitle(tr("Delete Faces"));
+  if (dialog->exec()) {
+    QString name = ui->lineEdit->text();
+    if (!name.isEmpty()) {
+      try {
+        filesystem::remove_all("imgs/" + name.toStdString());
+        loadFacesAndNames(cnn.face_names, "imgs/");
+      } catch (runtime_error &e) {
+        cerr << e.what() << endl;
+      }
+
+    }
+  }
+  delete ui;
+  delete dialog;
 }

@@ -16,7 +16,7 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QDialogButtonBox>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QPlainTextEdit>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
@@ -25,7 +25,7 @@ class Ui_getName
 {
 public:
     QVBoxLayout *verticalLayout;
-    QPlainTextEdit *plainTextEdit;
+    QLineEdit *lineEdit;
     QDialogButtonBox *buttonBox;
 
     void setupUi(QDialog *getName)
@@ -35,10 +35,10 @@ public:
         getName->resize(273, 136);
         verticalLayout = new QVBoxLayout(getName);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        plainTextEdit = new QPlainTextEdit(getName);
-        plainTextEdit->setObjectName(QStringLiteral("plainTextEdit"));
+        lineEdit = new QLineEdit(getName);
+        lineEdit->setObjectName(QStringLiteral("lineEdit"));
 
-        verticalLayout->addWidget(plainTextEdit);
+        verticalLayout->addWidget(lineEdit);
 
         buttonBox = new QDialogButtonBox(getName);
         buttonBox->setObjectName(QStringLiteral("buttonBox"));
@@ -58,7 +58,6 @@ public:
     void retranslateUi(QDialog *getName)
     {
         getName->setWindowTitle(QApplication::translate("getName", "Dialog", Q_NULLPTR));
-        plainTextEdit->setPlainText(QApplication::translate("getName", "Please write down your name.", Q_NULLPTR));
     } // retranslateUi
 
 };
