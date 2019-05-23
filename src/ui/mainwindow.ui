@@ -6,146 +6,110 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>796</width>
-    <height>594</height>
+    <width>688</width>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Face Recognition</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>775</width>
-      <height>535</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Display</string>
-    </property>
-    <widget class="QWidget" name="widget_ShowImg" native="true">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>60</y>
-       <width>660</width>
-       <height>280</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>660</width>
-       <height>280</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>660</width>
-       <height>280</height>
-      </size>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_CameraShow">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>352</width>
-          <height>240</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>1580</width>
-          <height>720</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:600;&quot;&gt;Display&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_Operation">
-     <property name="geometry">
-      <rect>
-       <x>5</x>
-       <y>350</y>
-       <width>765</width>
-       <height>175</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Operation</string>
-     </property>
-     <widget class="QPushButton" name="pushButton_OpenCamera">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>60</y>
-        <width>165</width>
-        <height>32</height>
-       </rect>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Display</string>
       </property>
-      <property name="text">
-       <string>Open Camera</string>
-      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+        <widget class="QWidget" name="widget_ShowImg" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>352</width>
+           <height>240</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>1580</width>
+           <height>720</height>
+          </size>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+           <widget class="QLabel" name="label_CameraShow">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>352</width>
+              <height>240</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>1580</width>
+              <height>720</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:600;&quot;&gt;Display&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QPushButton" name="pushButton_CloseCamera">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>100</y>
-        <width>165</width>
-        <height>32</height>
-       </rect>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_Operation">
+      <property name="title">
+       <string>Operation</string>
       </property>
-      <property name="text">
-       <string>Close Camera</string>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="pushButton_OpenCamera">
+         <property name="text">
+          <string>Open Camera</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_CloseCamera">
+         <property name="text">
+          <string>Close Camera</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_AddNewFaces">
+         <property name="text">
+          <string>Add New Face(s)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_DeleteFaces">
+         <property name="text">
+          <string>Delete Face(s)</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QPushButton" name="pushButton_AddNewFaces">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>60</y>
-        <width>165</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Add New Face(s)</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_DeleteFaces">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>100</y>
-        <width>165</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Delete Face(s)</string>
-      </property>
-     </widget>
-    </widget>
-   </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>796</width>
-     <height>28</height>
+     <width>688</width>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSettings">

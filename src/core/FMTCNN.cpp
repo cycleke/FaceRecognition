@@ -327,87 +327,6 @@ vector<FaceInfo> FMTCNN::nextStage(const Mat &image,
     }
   }
   return res;
-  /*
-    vector<FaceInfo> res;
-    int batch_size = static_cast<int>(pre_stage_res.size());
-    if (batch_size == 0) {
-      return res;
-    }
-
-    Mat *input_layer = nullptr;
-    Mat *confidence = nullptr;
-    Mat *reg_box = nullptr;
-    Mat *reg_landmark = nullptr;
-    vector<Mat> target_blobs;
-
-    if (stage_num != 2 && stage_num != 3) {
-      return res;
-    }
-
-    vector<Mat> inputs;
-
-    for (int i = 0; i < batch_size; i++) {
-      FaceBox &box = pre_stage_res[i].box;
-      Mat roi = image(Rect(Point((int)box.x_min, (int)box.y_min),
-                           Point((int)box.x_max, (int)box.y_max)))
-                    .clone();
-      resize(roi, roi, Size(input_w, input_h));
-      inputs.push_back(roi);
-    }
-
-    Mat blob_input = blobFromImage(inputs, std_val, Size(),
-                                   Scalar(mean_val, mean_val, mean_val), false);
-
-    switch (stage_num) {
-    case 2: {
-      r_net.setInput(blob_input, "data");
-      const vector<String> targets_node{"conv5-2", "prob1"};
-      r_net.forward(target_blobs, targets_node);
-      reg_box = &target_blobs[0];
-      confidence = &target_blobs[1];
-    } break;
-
-    case 3: {
-      o_net.setInput(blob_input, "data");
-      const vector<String> target_nodes{"conv6-2", "conv6-3", "prob1"};
-      o_net.forward(target_blobs, target_nodes);
-      reg_box = &target_blobs[0];
-      reg_landmark = &target_blobs[1];
-      confidence = &target_blobs[2];
-    } break;
-
-    default: { } break; }
-
-    const float *confidence_data = (float *)confidence->data;
-    const float *reg_data = (float *)reg_box->data;
-    const float *landmark_data = nullptr;
-
-    if (reg_landmark) {
-      landmark_data = (float *)reg_landmark->data;
-    }
-    for (int i = 0; i < batch_size; i++) {
-      if (confidence_data[2 * i + 1] >= threshold) {
-        FaceInfo info{};
-        info.box = pre_stage_res[i].box;
-        info.box.score = confidence_data[2 * i + 1];
-        for (int j = 0; j < 4; j++) {
-          info.box_reg[i] = reg_data[4 * i + j];
-        }
-        if (reg_landmark) {
-          float w = info.box.x_max - info.box.x_min + 1.f;
-          float h = info.box.y_max - info.box.y_min + 1.f;
-          for (int j = 0; j < 5; j++) {
-            info.landmark[2 * j] =
-                landmark_data[10 * i + 2 * j] * w + info.box.x_min;
-            info.landmark[2 * j + 1] =
-                landmark_data[10 * i + 2 * j + 1] * h + info.box.y_min;
-          }
-        }
-        res.push_back(info);
-      }
-    }
-    return res;
-    */
 }
 vector<FaceInfo> FMTCNN::ProposalNet(const Mat &img, float threshold) {
   Mat resized;
@@ -627,7 +546,7 @@ string FMTCNN::recogniseFace(Mat feature) {
     }
   }
   if (max_similarity > SIMILARITY_BOUND) {
-    printf("%lf\n", max_similarity);
+    printf("%f\n", max_similarity);
     return res;
   } else {
     return "unknown";

@@ -15,19 +15,24 @@
 
 #include "mainwindow.h"
 #include "ui_aboutFaceRecognition.h"
+#include "ui_getName.h"
 #include <QAction>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <filesystem>
+
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), capture() {
+    : QMainWindow(parent), ui(new Ui::MainWindow), capture() , detector(){
 
   ui->setupUi(this);
   ui->label_CameraShow->setScaledContents(true);
   this->setWindowTitle(tr("Face Recognition"));
 
   timer = new QTimer(this);
+  connect(timer, &QTimer::timeout, this, &MainWindow::recogniseFace);
+
 
   loadFacesAndNames(cnn.face_names, "imgs/");
 
@@ -51,7 +56,9 @@ MainWindow::~MainWindow() {
   delete timer;
 }
 
-void MainWindow::openPreferences() {}
+void MainWindow::openPreferences() {
+  // todo
+}
 
 void MainWindow::openAboutFaceRecognition() {
   QDialog *dialog = new QDialog(this);
@@ -71,13 +78,13 @@ QImage Mat2QImage(cv::Mat cvImg) {
   QImage qImg;
   if (cvImg.channels() == 3) {
     cv::cvtColor(cvImg, cvImg, cv::COLOR_BGR2RGB);
-    qImg = QImage((const unsigned char *)(cvImg.data), cvImg.cols, cvImg.rows,
+    qImg = QImage((const unsigned char *) (cvImg.data), cvImg.cols, cvImg.rows,
                   cvImg.cols * cvImg.channels(), QImage::Format_RGB888);
   } else if (cvImg.channels() == 1) {
-    qImg = QImage((const unsigned char *)(cvImg.data), cvImg.cols, cvImg.rows,
+    qImg = QImage((const unsigned char *) (cvImg.data), cvImg.cols, cvImg.rows,
                   cvImg.cols * cvImg.channels(), QImage::Format_Indexed8);
   } else {
-    qImg = QImage((const unsigned char *)(cvImg.data), cvImg.cols, cvImg.rows,
+    qImg = QImage((const unsigned char *) (cvImg.data), cvImg.cols, cvImg.rows,
                   cvImg.cols * cvImg.channels(), QImage::Format_RGB888);
   }
   return qImg;
@@ -97,11 +104,11 @@ void MainWindow::on_pushButton_OpenCamera_clicked() {
     Mat frame;
     capture >> frame;
     if (!frame.empty()) {
-      auto image = Mat2QImage(cnn.recogniseFrame(frame));
+      auto img = cnn.recogniseFrame(frame);
+      auto image = Mat2QImage(img);
       ui->label_CameraShow->setPixmap(QPixmap::fromImage(image));
       timer->setInterval(static_cast<int>(1000 / rate));
       // timer->setInterval(1);
-      connect(timer, &QTimer::timeout, this, &MainWindow::recogniseFace);
       timer->start();
     }
   }
@@ -110,7 +117,8 @@ void MainWindow::on_pushButton_OpenCamera_clicked() {
 void MainWindow::recogniseFace() {
   Mat frame;
   capture >> frame;
-  auto image = Mat2QImage(cnn.recogniseFrame(frame));
+  auto img = cnn.recogniseFrame(frame);
+  auto image = Mat2QImage(img);
   ui->label_CameraShow->setPixmap(QPixmap::fromImage(image));
 }
 
@@ -119,12 +127,26 @@ void MainWindow::on_pushButton_CloseCamera_clicked() {
   ui->pushButton_CloseCamera->setDisabled(true);
   ui->pushButton_AddNewFaces->setDisabled(true);
   ui->pushButton_DeleteFaces->setDisabled(true);
-
+  timer->stop();
   capture.release();
+  ui->label_CameraShow->setPixmap(QPixmap());
 }
 
 void MainWindow::on_pushButton_AddNewFaces_clicked() {
-  // todo
+  this->on_pushButton_CloseCamera_clicked();
+
+  QDialog *dialog = new QDialog(this);
+  auto *ui = new Ui::getName;
+
+  ui->setupUi(dialog);
+  dialog->setWindowTitle(tr("Add New Fases"));
+  dialog->exec();
+
+  QString name = ui->plainTextEdit->toPlainText();
+  detector.saveFacesFromCamera(name.toStdString());
+
+  delete ui;
+  delete dialog;
 }
 
 void MainWindow::on_pushButton_DeleteFaces_clicked() {

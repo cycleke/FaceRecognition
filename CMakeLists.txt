@@ -8,7 +8,7 @@ if (WIN32)
     add_definitions(-DWIM32)
 endif ()
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -35,6 +35,7 @@ set(SOURCE_FILES
         src/ui/mainwindow.cpp
         src/ui/ui_aboutFaceRecognition.h
         src/ui/ui_mainwindow.h
+        src/ui/ui_getName.h
         src/core/Detector.h
         src/core/Detector.cpp
         src/core/FMTCNN.h

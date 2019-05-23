@@ -20,6 +20,7 @@ public:
 private:
   Ui::MainWindow *ui;
   FMTCNN cnn;
+  Detector detector;
   VideoCapture capture;
   QTimer *timer;
 
