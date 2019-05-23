@@ -21,11 +21,11 @@ make
 Note: Some of the files are tracked with lfs due to their size, please clone with lfs.
 
 ## TODOs
-- [ ] Make GUI
-  - [ ] Main Window
+- [x] Make GUI
+  - [x] Main Window
   - [ ] Settings
-  - [ ] About
-- [ ] Add and delete faces
+  - [x] About
+- [x] Add and delete faces
   - [x] Detect faces
   - [x] Recognise different faces
 - [ ] Import and export data
