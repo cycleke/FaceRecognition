@@ -114,7 +114,8 @@ private:
   const string proto_model_dir = "static/model";
 };
 
-void loadFacesAndNames(vector<FaceFeature> &face_names, const string &data_path);
-double CosineSimilarity(const Mat &a, const Mat &b);
+void loadFacesAndNames(vector<FaceFeature> &face_names,
+                       const string &data_path);
+float CosineSimilarity(const Mat &a, const Mat &b);
 
 #endif // FACERECOGNITION_FMTCNN_H

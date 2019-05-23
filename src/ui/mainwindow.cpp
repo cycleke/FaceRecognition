@@ -13,12 +13,12 @@
 '---------------------------------------'
   */
 
+#include "mainwindow.h"
+#include "ui_aboutFaceRecognition.h"
 #include <QAction>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QStatusBar>
-#include "mainwindow.h"
-#include "ui_aboutFaceRecognition.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), capture() {
@@ -71,13 +71,13 @@ QImage Mat2QImage(cv::Mat cvImg) {
   QImage qImg;
   if (cvImg.channels() == 3) {
     cv::cvtColor(cvImg, cvImg, cv::COLOR_BGR2RGB);
-    qImg = QImage((const unsigned char *) (cvImg.data), cvImg.cols, cvImg.rows,
+    qImg = QImage((const unsigned char *)(cvImg.data), cvImg.cols, cvImg.rows,
                   cvImg.cols * cvImg.channels(), QImage::Format_RGB888);
   } else if (cvImg.channels() == 1) {
-    qImg = QImage((const unsigned char *) (cvImg.data), cvImg.cols, cvImg.rows,
+    qImg = QImage((const unsigned char *)(cvImg.data), cvImg.cols, cvImg.rows,
                   cvImg.cols * cvImg.channels(), QImage::Format_Indexed8);
   } else {
-    qImg = QImage((const unsigned char *) (cvImg.data), cvImg.cols, cvImg.rows,
+    qImg = QImage((const unsigned char *)(cvImg.data), cvImg.cols, cvImg.rows,
                   cvImg.cols * cvImg.channels(), QImage::Format_RGB888);
   }
   return qImg;
@@ -100,6 +100,7 @@ void MainWindow::on_pushButton_OpenCamera_clicked() {
       auto image = Mat2QImage(cnn.recogniseFrame(frame));
       ui->label_CameraShow->setPixmap(QPixmap::fromImage(image));
       timer->setInterval(static_cast<int>(1000 / rate));
+      // timer->setInterval(1);
       connect(timer, &QTimer::timeout, this, &MainWindow::recogniseFace);
       timer->start();
     }

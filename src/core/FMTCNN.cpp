@@ -41,10 +41,10 @@ vector<FaceInfo> FMTCNN::DetectMTCNN(const Mat &image, const int &stage) {
   }
   if (stage >= 2 && !p_net_res.empty()) {
     if (p_net_max_detect_num < p_net_res.size()) {
-      p_net_res.resize((unsigned long) p_net_max_detect_num);
+      p_net_res.resize((unsigned long)p_net_max_detect_num);
     }
     int num = static_cast<int>(p_net_res.size());
-    int size = (int) ceil(1.0 * num / step_size);
+    int size = (int)ceil(1.0 * num / step_size);
 
     for (int iter = 0; iter < size; iter++) {
       int start = iter * step_size;
@@ -60,7 +60,7 @@ vector<FaceInfo> FMTCNN::DetectMTCNN(const Mat &image, const int &stage) {
   }
   if (stage >= 3 && !r_net_res.empty()) {
     int num = static_cast<int>(r_net_res.size());
-    int size = (int) ceil(1.0 * num / step_size);
+    int size = (int)ceil(1.0 * num / step_size);
 
     for (int iter = 0; iter < size; iter++) {
       int start = iter * step_size;
@@ -75,12 +75,14 @@ vector<FaceInfo> FMTCNN::DetectMTCNN(const Mat &image, const int &stage) {
     BoxPadSquare(o_net_res, image.cols, image.rows);
   }
   switch (stage) {
-  case 1:return p_net_res;
-  case 2:return r_net_res;
-  case 3:return o_net_res;
+  case 1:
+    return p_net_res;
+  case 2:
+    return r_net_res;
+  case 3:
+    return o_net_res;
   default:
-    cout << "Wrong param: the stage is out of {1, 2, 3} in DetectMTCNN"
-         << endl;
+    cout << "Wrong param: the stage is out of {1, 2, 3} in DetectMTCNN" << endl;
     return vector<FaceInfo>();
   }
 }
@@ -150,7 +152,8 @@ vector<FaceInfo> FMTCNN::NMS(vector<FaceInfo> &boxes, float thresh,
           mask_merged[i] = 1;
         }
         break;
-      default:break;
+      default:
+        break;
       }
     }
   }
@@ -200,10 +203,10 @@ void FMTCNN::generateBox(Mat *confidence, Mat *reg_box, float scale,
   int feature_map_h = confidence->size[2];
   int spatical_size = feature_map_w * feature_map_h;
 
-  const float *confidence_data = (float *) (confidence->data);
+  const float *confidence_data = (float *)(confidence->data);
   confidence_data += spatical_size;
 
-  const float *reg_data = (float *) (reg_box->data);
+  const float *reg_data = (float *)(reg_box->data);
   candidate_boxes.clear();
   for (int i = 0; i < spatical_size; i++) {
     if (confidence_data[i] <= 1 - thresh) {
@@ -231,7 +234,7 @@ vector<FaceInfo> FMTCNN::nextStage(const Mat &image,
                                    int input_h, int stage_num,
                                    float threshold) {
   vector<FaceInfo> res;
-  int batch_size = (int) pre_stage_res.size();
+  int batch_size = (int)pre_stage_res.size();
 
   if (batch_size == 0) {
     return res;
@@ -246,12 +249,11 @@ vector<FaceInfo> FMTCNN::nextStage(const Mat &image,
 
   switch (stage_num) {
   case 2: {
-  }
-    break;
+  } break;
   case 3: {
-  }
-    break;
-  default:return res;
+  } break;
+  default:
+    return res;
     break;
   }
   int spatial_size = input_h * input_w;
@@ -260,9 +262,9 @@ vector<FaceInfo> FMTCNN::nextStage(const Mat &image,
 
   for (int n = 0; n < batch_size; ++n) {
     FaceBox &box = pre_stage_res[n].box;
-    Mat roi = image(Rect(Point((int) box.x_min, (int) box.y_min),
-                         Point((int) box.x_max, (int) box.y_max)))
-        .clone();
+    Mat roi = image(Rect(Point((int)box.x_min, (int)box.y_min),
+                         Point((int)box.x_max, (int)box.y_max)))
+                  .clone();
     resize(roi, roi, Size(input_w, input_h));
     inputs.push_back(roi);
   }
@@ -278,9 +280,8 @@ vector<FaceInfo> FMTCNN::nextStage(const Mat &image,
     confidence = &targets_blobs[1];
     reg_box = &targets_blobs[0];
 
-    auto *confidence_data = (float *) confidence->data;
-  }
-    break;
+    auto *confidence_data = (float *)confidence->data;
+  } break;
   case 3: {
     o_net.setInput(blob_input, "data");
     const vector<String> targets_node{"conv6-2", "conv6-3", "prob1"};
@@ -289,17 +290,17 @@ vector<FaceInfo> FMTCNN::nextStage(const Mat &image,
     reg_landmark = &targets_blobs[1];
     confidence = &targets_blobs[2];
 
-  }
+  } break;
+  default:
     break;
-  default:break;
   }
 
-  const float *confidence_data = (float *) confidence->data;
+  const float *confidence_data = (float *)confidence->data;
 
-  const float *reg_data = (float *) reg_box->data;
+  const float *reg_data = (float *)reg_box->data;
   const float *landmark_data = nullptr;
   if (reg_landmark) {
-    landmark_data = (float *) reg_landmark->data;
+    landmark_data = (float *)reg_landmark->data;
   }
   for (int k = 0; k < batch_size; ++k) {
     if (confidence_data[2 * k + 1] >= threshold) {
@@ -423,14 +424,14 @@ vector<FaceInfo> FMTCNN::ProposalNet(const Mat &img, float threshold) {
 
   total_boxes.clear();
   for (auto i_scale : scales) {
-    int ws = (int) ceil(width * i_scale);
-    int hs = (int) ceil(height * i_scale);
+    int ws = (int)ceil(width * i_scale);
+    int hs = (int)ceil(height * i_scale);
     resize(img, resized, Size(ws, hs), 0, 0, INTER_LINEAR);
 
     Mat inputBlob =
         dnn::blobFromImage(resized, 1 / 255.0, Size(), Scalar(0, 0, 0), false);
 
-    auto *c = (float *) inputBlob.data;
+    auto *c = (float *)inputBlob.data;
     p_net.setInput(inputBlob, "data");
     const vector<String> targets_node{"conv4-2", "prob1"};
     vector<Mat> targets_blobs;
@@ -444,7 +445,7 @@ vector<FaceInfo> FMTCNN::ProposalNet(const Mat &img, float threshold) {
       total_boxes.insert(total_boxes.end(), boxes_nms.begin(), boxes_nms.end());
     }
   }
-  int num_box = (int) total_boxes.size();
+  int num_box = (int)total_boxes.size();
 
   vector<FaceInfo> res_boxes;
   if (num_box != 0) {
@@ -468,17 +469,17 @@ float FMTCNN::IoU(float x_min, float y_min, float x_max, float y_max,
                    (x_max_ - x_min_ + 1) * (y_max_ - y_min_ + 1));
   } else {
     return s / ((x_max - x_min + 1) * (y_max - y_min + 1) +
-        (x_max_ - x_min_ + 1) * (y_max_ - y_min_ + 1) - s);
+                (x_max_ - x_min_ + 1) * (y_max_ - y_min_ + 1) - s);
   }
 }
 
 Mat FMTCNN::getTFormMatrix(float *std_points, float *feat_points) {
   int points_num_ = 5;
-  double sum_x = 0, sum_y = 0;
-  double sum_u = 0, sum_v = 0;
-  double sum_xx_yy = 0;
-  double sum_ux_vy = 0;
-  double sum_vx__uy = 0;
+  float sum_x = 0, sum_y = 0;
+  float sum_u = 0, sum_v = 0;
+  float sum_xx_yy = 0;
+  float sum_ux_vy = 0;
+  float sum_vx__uy = 0;
 
   for (int c = 0; c < points_num_; ++c) {
     int x_off = c * 2;
@@ -488,21 +489,21 @@ Mat FMTCNN::getTFormMatrix(float *std_points, float *feat_points) {
     sum_u += feat_points[x_off];
     sum_v += feat_points[y_off];
     sum_xx_yy += std_points[x_off] * std_points[x_off] +
-        std_points[y_off] * std_points[y_off];
+                 std_points[y_off] * std_points[y_off];
     sum_ux_vy += std_points[x_off] * feat_points[x_off] +
-        std_points[y_off] * feat_points[y_off];
+                 std_points[y_off] * feat_points[y_off];
     sum_vx__uy += feat_points[y_off] * std_points[x_off] -
-        feat_points[x_off] * std_points[y_off];
+                  feat_points[x_off] * std_points[y_off];
   }
-  double q =
+  float q =
       sum_u - sum_x * sum_ux_vy / sum_xx_yy + sum_y * sum_vx__uy / sum_xx_yy;
-  double p =
+  float p =
       sum_v - sum_y * sum_ux_vy / sum_xx_yy - sum_x * sum_vx__uy / sum_xx_yy;
-  double r = points_num_ - (sum_x * sum_x + sum_y * sum_y) / sum_xx_yy;
-  double a = (sum_ux_vy - sum_x * q / r - sum_y * p / r) / sum_xx_yy;
-  double b = (sum_vx__uy + sum_y * q / r - sum_x * p / r) / sum_xx_yy;
-  double c = q / r;
-  double d = p / r;
+  float r = points_num_ - (sum_x * sum_x + sum_y * sum_y) / sum_xx_yy;
+  float a = (sum_ux_vy - sum_x * q / r - sum_y * p / r) / sum_xx_yy;
+  float b = (sum_vx__uy + sum_y * q / r - sum_x * p / r) / sum_xx_yy;
+  float c = q / r;
+  float d = p / r;
 
   Mat t_inv = (cv::Mat_<float>(3, 3) << a, b, 0, -b, a, 0, c, d, 1);
   Mat t = t_inv.inv();
@@ -532,7 +533,8 @@ void FMTCNN::normalizeFace(Mat dst_img, Mat &normalize_img) {
   normalize_img /= 128;
 }
 
-void loadFacesAndNames(vector<FaceFeature> &face_names, const string &data_path) {
+void loadFacesAndNames(vector<FaceFeature> &face_names,
+                       const string &data_path) {
   face_names.clear();
   DIR *dir_p = opendir(data_path.c_str());
   if (dir_p == nullptr) {
@@ -562,10 +564,10 @@ void loadFacesAndNames(vector<FaceFeature> &face_names, const string &data_path)
       FaceInfo face_info{};
       int max_size = 0;
       for (auto &info : face_infos) {
-        int x = (int) info.box.x_min;
-        int y = (int) info.box.y_min;
-        int w = (int) (info.box.x_max - info.box.x_min + 1);
-        int h = (int) (info.box.y_max - info.box.y_min + 1);
+        int x = (int)info.box.x_min;
+        int y = (int)info.box.y_min;
+        int w = (int)(info.box.x_max - info.box.x_min + 1);
+        int h = (int)(info.box.y_max - info.box.y_min + 1);
         if (w * h > max_size) {
           face_img = img(Range(y, y + h - 1), Range(x, x + w - 1));
           max_size = w * h;
@@ -591,13 +593,13 @@ void loadFacesAndNames(vector<FaceFeature> &face_names, const string &data_path)
   }
 }
 
-double CosineSimilarity(const Mat &a, const Mat &b) {
+float CosineSimilarity(const Mat &a, const Mat &b) {
   if (a.empty() || b.empty()) {
     return -1.0;
   }
-  double ab = a.dot(b);
-  double norm_a = norm(a);
-  double norm_b = norm(b);
+  float ab = a.dot(b);
+  float norm_a = norm(a);
+  float norm_b = norm(b);
   if (norm(a) != 0 && norm(b) != 0) {
     return ab / (norm_a * norm_b);
   } else {
@@ -608,16 +610,17 @@ double CosineSimilarity(const Mat &a, const Mat &b) {
 string FMTCNN::recogniseFace(Mat feature) {
 
   string res = "unknown";
-  double max_similarity = -1;
+  float max_similarity = -1;
   for (const auto &face : face_names) {
-    double similarities[IMG_NUMBER];
+    float similarities[IMG_NUMBER];
     for (int i = 0; i < IMG_NUMBER; i++) {
       similarities[i] = CosineSimilarity(face.feature[i], feature);
     }
     sort(similarities, similarities + IMG_NUMBER);
-    double similarity =
-        accumulate(similarities, similarities + IMG_NUMBER, -similarities[0] - similarities[IMG_NUMBER - 1])
-            / (IMG_NUMBER - 2);
+    float similarity =
+        accumulate(similarities, similarities + IMG_NUMBER,
+                   -similarities[0] - similarities[IMG_NUMBER - 1]) /
+        (IMG_NUMBER - 2);
     if (similarity > max_similarity) {
       res = face.name;
       max_similarity = similarity;
@@ -646,7 +649,7 @@ void FMTCNN::recogniseWithCamera() {
     Mat image = recogniseFrame(frame);
 
     imshow("Recognising Face", image);
-    char c = (char) waitKey(1);
+    char c = (char)waitKey(1);
     if (c == 27 || c == 'q' || c == 'Q')
       break;
   }
@@ -671,10 +674,10 @@ Mat FMTCNN::recogniseFrame(const Mat &frame) {
     feature_output = net.forward("fc5");
 
     string name = recogniseFace(feature_output);
-    int x = (int) info.box.x_min;
-    int y = (int) info.box.y_min;
-    int w = (int) (info.box.x_max - info.box.x_min + 1);
-    int h = (int) (info.box.y_max - info.box.y_min + 1);
+    int x = (int)info.box.x_min;
+    int y = (int)info.box.y_min;
+    int w = (int)(info.box.x_max - info.box.x_min + 1);
+    int h = (int)(info.box.y_max - info.box.y_min + 1);
     rectangle(image, Rect(x, y, w, h), Scalar(0, 0, 255), 2);
     putText(image, name, Point(x, y - 20), FONT_HERSHEY_SIMPLEX, 0.8,
             Scalar(255, 255, 255), 2);

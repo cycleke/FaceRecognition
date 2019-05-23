@@ -52,6 +52,32 @@ int Detector::createDirectory(const string &directory_path) {
   }
   return 0;
 }
+
+void relight(Mat &img) {
+  /*
+   * Relight the frane to make data more random
+   * Param
+   *   img: the img to relight
+   */
+  static mt19937 rdm(chrono::steady_clock::now().time_since_epoch().count());
+  static uniform_int_distribution<int> u_int(-50, 50);
+  static uniform_real_distribution<float> u_real(0.5, 1.5);
+
+  int bias = u_int(rdm);
+  float light = u_real(rdm);
+
+  int n = img.rows;
+  int m = img.cols * img.channels();
+
+  for (int i = 0; i < n; ++i) {
+    auto iter = img.ptr<uchar>(i);
+    for (int j = 0; j < m; ++j) {
+      *iter = *iter * light + bias;
+      ++iter;
+    }
+  }
+}
+
 void Detector::saveFacesFromCamera(const string &name) {
   /*
    * Get IMG_NUMBER photos of someone and save them.
@@ -109,12 +135,13 @@ void Detector::saveFacesFromCamera(const string &name) {
 
     if (max_size > 0) {
       printf("It's processing %d image.\n", count);
+      relight(face_img);
       imwrite(data_path + to_string(count) + DATA_FORMAT, face_img);
       count++;
     }
 
     imshow("Adding Face", display_frame);
-    char c = (char) waitKey(1);
+    char c = (char)waitKey(1);
     if (c == 27 || c == 'q' || c == 'Q')
       break;
   }
