@@ -21,7 +21,9 @@ void Detector::saveFacesFromCamera(const string &name) {
    *   name: the name of someone
    */
   string data_path = this->data_path + name + "/";
-  filesystem::create_directories(data_path);
+  if (!filesystem::exists(data_path)) {
+    filesystem::create_directories(data_path);
+  }
 
   VideoCapture capture;
   CascadeClassifier classifier = CascadeClassifier(this->cascade_path);
