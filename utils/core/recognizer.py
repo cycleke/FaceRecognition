@@ -7,7 +7,7 @@ import dlib
 import numpy as np
 
 
-class Recognition:
+class Recognizer:
     """
     Recognise faces
     """
@@ -161,7 +161,7 @@ class Recognition:
 
 
 if __name__ == "__main__":
-    recognition = Recognition()
+    recognition = Recognizer()
     recognition.add_face("TEST")
 
     capture = cv2.VideoCapture(0)
