@@ -1,4 +1,4 @@
 opencv_python==4.1.0.25
 dlib==19.17.0
-numpy==1.14.3
+numpy==1.14.6
 PyQt5==5.12.2
