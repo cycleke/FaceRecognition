@@ -8,14 +8,14 @@ This program is used to recognise faces with opencv.
 The gui is based on Qt5.
 
 ## Requirements
-Qt5, OpenCV4
+PyQt5, OpenCV4, dlib
 
 ## Build Steps
 ``` shell
 git clone https://github.com/cycleke/FaceRecognition
 cd FaceRecognition
-cmake .
-make
+pip install -r requirements.txt
+python main.py
 ```
 
 Note: Some of the files are tracked with lfs due to their size, please clone with lfs.
