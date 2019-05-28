@@ -34,13 +34,14 @@ class Recognizer:
         :return: None
         """
         self.face_descriptors = {}
-        for faces in os.listdir(dataset):
-            file_name, extension = os.path.splitext(faces)
-            if extension != ".npy":
-                continue
-            descriptors = np.load(os.path.join(dataset, faces))
-            if descriptors.any():
-                self.face_descriptors[file_name] = descriptors.copy()
+        if os.path.exists(dataset):
+            for faces in os.listdir(dataset):
+                file_name, extension = os.path.splitext(faces)
+                if extension != ".npy":
+                    continue
+                descriptors = np.load(os.path.join(dataset, faces))
+                if descriptors.any():
+                    self.face_descriptors[file_name] = descriptors.copy()
 
     def find_match_face(self, face_descriptor):
         """

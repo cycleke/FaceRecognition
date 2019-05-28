@@ -99,6 +99,10 @@ class MainWindow(QMainWindow):
         self.ui.label_CameraShow.setPixmap(QPixmap())
 
     def clicked_add_new_faces(self):
+        camera_opened = self.ui.pushButton_CloseCamera.isEnabled()
+        if camera_opened:
+            self.clicked_close_camera()
+
         dialog = QDialog(self)
         ui = Ui_getName()
         ui.setupUi(dialog)
@@ -109,7 +113,14 @@ class MainWindow(QMainWindow):
             if name:
                 self.recognizer.add_face(name)
 
+        if camera_opened:
+            self.clicked_open_camera()
+
     def clicked_delete_faces(self):
+        camera_opened = self.ui.pushButton_CloseCamera.isEnabled()
+        if camera_opened:
+            self.clicked_close_camera()
+
         dialog = QDialog(self)
         ui = Ui_getName()
         ui.setupUi(dialog)
@@ -119,3 +130,5 @@ class MainWindow(QMainWindow):
             name = ui.lineEdit.text()
             if name in self.recognizer.face_descriptors.keys():
                 self.recognizer.face_descriptors.pop(name)
+        if camera_opened:
+            self.clicked_open_camera()
