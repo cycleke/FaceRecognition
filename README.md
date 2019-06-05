@@ -1,26 +1,31 @@
 # FaceRecognition
-The Face Recognition with OpenCV and Qt
+
+The Face Recognition with dlib and Qt
 
 ![License](https://img.shields.io/github/license/cycleke/FaceRecognition.svg?style=flat-square)
 
 ## Introduction
-This program is used to recognise faces with opencv.
+
+This program is used to recognise faces with dlib.
 The gui is based on Qt5.
 
 ## Requirements
-Qt5, OpenCV4
+
+PyQt5, OpenCV4, dlib
 
 ## Build Steps
-``` shell
+
+```shell
 git clone https://github.com/cycleke/FaceRecognition
 cd FaceRecognition
-cmake .
-make
+pip install -r requirements.txt
+python main.py
 ```
 
 Note: Some of the files are tracked with lfs due to their size, please clone with lfs.
 
 ## TODOs
+
 - [x] Make GUI
   - [x] Main Window
   - [ ] Settings
