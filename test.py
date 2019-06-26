@@ -1,7 +1,8 @@
 # *-* coding: utf-8 *-*
 
 import os
-
+import sys
+import time
 import cv2
 import dlib
 import numpy as np
@@ -13,11 +14,11 @@ class Recognizer:
     """
 
     def __init__(
-            self,
-            *,
-            threshold=0.6,
-            predictor_path="static/shape_predictor_68_face_landmarks.dat",
-            face_rec_model_path="static/dlib_face_recognition_resnet_model_v1.dat",
+        self,
+        *,
+        threshold=0.6,
+        predictor_path="static/shape_predictor_68_face_landmarks.dat",
+        face_rec_model_path="static/dlib_face_recognition_resnet_model_v1.dat",
     ):
         self.detector = dlib.get_frontal_face_detector()
         self.shape_predictor = dlib.shape_predictor(predictor_path)
@@ -76,27 +77,25 @@ class Recognizer:
         """
         img = image.copy()
         dets = self.detector(img, 1)
+
+        max_d = None
+
+        def area(rect):
+            height = rect.top() - rect.bottom()
+            width = rect.right() - rect.left()
+            return height * width
+
         for k, d in enumerate(dets):
-            shape = self.shape_predictor(img, d)
-            face_descriptor = self.model.compute_face_descriptor(img, shape)
+            if (not max_d) or (area(d) > area(max_d)):
+                max_d = d
 
-            class_pre = self.find_match_face(face_descriptor)
-            cv2.rectangle(
-                img, (d.left(), d.top() + 10), (d.right(), d.bottom()), (0, 255, 0), 2
-            )
-            cv2.putText(
-                img,
-                class_pre,
-                (d.left(), d.top()),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.7,
-                (0, 255, 0),
-                2,
-                cv2.LINE_AA,
-            )
-        return img
+        if max_d == None:
+            return ""
+        shape = self.shape_predictor(img, max_d)
+        face_descriptor = self.model.compute_face_descriptor(img, shape)
+        return self.find_match_face(face_descriptor)
 
-    def add_face(self, name, count=20, dataset="dataset"):
+    def add_face(self, name, img_dir, count=4, dataset="dataset"):
         """
         Add some faces from camera with given name
 
@@ -109,18 +108,10 @@ class Recognizer:
         if not os.path.exists(dataset):
             os.mkdir(dataset)
 
-        capture = cv2.VideoCapture(0)
-
-        if not capture.isOpened():
-            raise RuntimeError("Unable to open the camera")
-
         added = 0
         face_descriptors = []
-        while added < count:
-            success, frame = capture.read()
-
-            if not success:
-                continue
+        for img_file in os.listdir(img_dir):
+            frame = cv2.imread(os.path.join(img_dir, img_file))
 
             dets = self.detector(frame, 1)
 
@@ -144,33 +135,56 @@ class Recognizer:
                 descriptor = self.model.compute_face_descriptor(frame, shape)
                 face_descriptors.append(descriptor)
                 added += 1
-                cv2.rectangle(
-                    frame,
-                    (max_d.left(), max_d.top() + 10),
-                    (max_d.right(), max_d.bottom()),
-                    (0, 255, 0),
-                    2,
-                )
-            cv2.imshow("Adding Faces", frame)
-            cv2.waitKey(1)
+                if added == count:
+                    break
 
         self.face_descriptors[name] = face_descriptors
-
-        np.save(os.path.join(dataset, name), np.array(face_descriptors))
-        cv2.destroyAllWindows()
-        capture.release()
+        # np.save(os.path.join(dataset, name), np.array(face_descriptors))
 
 
 if __name__ == "__main__":
     recognition = Recognizer()
-    recognition.add_face("TEST")
 
-    capture = cv2.VideoCapture(0)
+    count, limit = 0, 300
 
-    while True:
-        success, frame = capture.read()
-        image = recognition.recognise_image(frame)
-
-        cv2.imshow("images", image)
-        if cv2.waitKey(1) & 0xFF == ord("q"):
+    persons = os.listdir("lfw_small")
+    persons.sort()
+    for person in persons:
+        cnt = min(max(len(os.listdir(os.path.join("lfw_small", person))) / 2, 4), 20)
+        recognition.add_face(person, os.path.join("lfw_small", person), cnt)
+        sys.stdout.write("#" + "->" + "\b\b")
+        sys.stdout.flush()
+        count += 1
+        #print(person, count)
+        if count >= limit:
             break
+
+    sys.stdout.write("\n")
+
+    log = ""
+    count = 0
+    s_total, s_correct = 0, 0
+    for person in persons:
+        log += person + ": "
+        total, correct = 0, 0
+        for img_file in os.listdir(os.path.join("lfw_small", person)):
+            image = os.path.join("lfw_small", person, img_file)
+            image = cv2.imread(image)
+            total += 1
+            time1 = time.time()
+            if recognition.recognise_image(image) == person:
+                correct += 1
+            time2 = time.time()
+            log += "%gs " % (time2 - time1)
+        log += "\n%d / %d\n" % (correct, total)
+        s_total += total
+        s_correct += correct
+        sys.stdout.write("#" + "->" + "\b\b")
+        sys.stdout.flush()
+        count += 1
+        #print(person, count)
+        if count >= limit:
+            break
+
+    log += "total: %d / %d" % (s_correct, s_total)
+    open("test.log", "w").write(log)
