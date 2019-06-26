@@ -15,7 +15,7 @@ class Recognizer:
     def __init__(
             self,
             *,
-            threshold=0.54,
+            threshold=0.6,
             predictor_path="static/shape_predictor_68_face_landmarks.dat",
             face_rec_model_path="static/dlib_face_recognition_resnet_model_v1.dat",
     ):
